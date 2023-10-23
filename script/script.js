@@ -55,7 +55,7 @@ for (let i=0;i<team.length;i++){
 btnNewTeammate.addEventListener('click', createForm);
 
 function createForm(){
-    form.innerHTML += `
+    form.innerHTML = `
         <div class="mb-3">
             <label for="name" class="form-label">enter name</label>
             <input type="text" class="form-control cardInput" placeholder="name and surname">
@@ -66,7 +66,8 @@ function createForm(){
         </div>
         <div>
                 <label for="picture" class="form-label">send picture</label>
-                <input type="file" class="form-control cardInput">
+                <input type="text" class="form-control cardInput" placeholder="url or avatar">
+                <div class="text-secondary">gli avatar sono i nomi dei teamate esistenti</div>
         </div>
         <button class="mt-3 btn btn-success">send info</button>
         <div id="error-form" class="text-danger mt-2"><div>
@@ -101,12 +102,28 @@ function send(){
 function newCard(teammate){
     const card = document.createElement('div');
     card.className = 'col-4';
-    let src = ''
-    if(input.length === 0) src = 'img/' + teammate.picture;
-    else src = teammate.picture;
+    let address = '';
+    if(teammate.picture.includes('http')) address = `src="${teammate.picture}"` ;
+    else if(input.length !== 0){
+        let flag = false;
+        for(let i = 0; i < team.length;i++){
+            console.log(team[i].name);
+            console.log(teammate.picture);
+            if(teammate.picture === team[i].name){
+                flag = true;
+                address = `src="img/${team[i].picture}"`;
+            }
+        }
+        if(!flag){
+            errorForm.innerHTML = 'ERRORE, inserire nome avatar corretto.'
+            return;
+        }
+    }else {
+        address = address = `src="img/${teammate.picture}"`;
+    }
     card.innerHTML += `
          <div class="card text-center">
-            <img class="card-img-top" src="${src}" alt="Title">
+            <img class="card-img-top" ${address} alt="Title">
             <div class="card-body">
                 <h4 class="card-title">${teammate.name}</h4>
                 <div class="card-text">
